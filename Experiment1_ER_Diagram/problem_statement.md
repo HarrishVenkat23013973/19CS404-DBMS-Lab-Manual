@@ -22,31 +22,37 @@ FlexiFit Gym wants a database to manage its members, trainers, and fitness progr
 - Payments tracked for memberships and sessions.
 
 ### ER Diagram:
-*Paste or attach your diagram here*  
-![ER Diagram](er_diagram_fitness.png)
+<img width="1005" height="623" alt="Screenshot 2026-03-11 222350" src="https://github.com/user-attachments/assets/da90fa19-82f9-4067-9827-62fc0ce7daa7" />
+
 
 ### Entities and Attributes
 
-| Entity | Attributes (PK, FK) | Notes |
-|--------|--------------------|-------|
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
+| Entity | Attributes (PK, FK) | 
+|--------|--------------------|
+|member      |member_id(PK),name,phone,membership_type,start_date|
+|program      |program_id,program_name,duration,schedule|
+|Trainer        |trainer_id(PK),trainer_name,specialization,phone |
+|Session        |session_id(PK),session_date,session_time,trainer_id(FK)   |
+|Payment        |payment_id(PK),payment_type,payment_date|
+|Attendance      |attendance_id(PK),status,member_id(FK),seesion_id(FK)                    |
+
 
 ### Relationships and Constraints
 
-| Relationship | Cardinality | Participation | Notes |
-|--------------|------------|---------------|-------|
-|              |            |               |       |
-|              |            |               |       |
-|              |            |               |       |
+| Relationship | Entities Involved | Cardinality |
+|--------------|------------|---------------|
+|joins         |member-program|M:N          |      
+|assigned_to   |program-trainer| M:N        |       
+|books         |member-session |1:N         |       
+|makes         |member-payment |1:N         |       
+|has           |session-attendance|1:N      |       
 
 ### Assumptions
-- 
-- 
-- 
+- Each entity (Member, Program, Trainer, Session, Payment, Attendance) has a unique primary key, and relationships are maintained using foreign keys.
+- The system supports many-to-many and one-to-many relationships, such as members joining multiple programs and making multiple payments.
+- All necessary details (like name, date, amount, schedule) are properly stored and assumed to be valid (no missing or incorrect data).
+
+ 
 
 ---
 
@@ -64,31 +70,36 @@ The Central Library wants to manage book lending and cultural events.
 - Overdue fines apply for late returns.
 
 ### ER Diagram:
-*Paste or attach your diagram here*  
-![ER Diagram](er_diagram_library.png)
+<img width="1045" height="853" alt="Screenshot 2026-03-11 222335" src="https://github.com/user-attachments/assets/eaddfda2-f25e-4736-8330-77723656d610" />
+
 
 ### Entities and Attributes
 
-| Entity | Attributes (PK, FK) | Notes |
-|--------|--------------------|-------|
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
+| Entity  | Attributes (PK, FK)                                               | Notes                          |
+| ------- | ----------------------------------------------------------------- | ------------------------------ |
+| member  | **member_id (PK)**, name, address, phone                          | Stores member details          |
+| book    | **book_id (PK)**, title, author, category                         | Stores book information        |
+| loan    | **loan_id (PK)**, loan_date, **member_id (FK)**, **book_id (FK)** | Records borrowing details      |
+| fine    | **fine_id (PK)**, amount, payment_status                          | Fine generated for late return |
+| event   | **event_id (PK)**, event_name, event_date, topic                  | Library events                 |
+| room    | **room_id (PK)**, room_name, location                             | Event location                 |
+| speaker | **speaker_id (PK)**, speaker_name, contact, expertise             | Event speaker details          |
+
 
 ### Relationships and Constraints
-
-| Relationship | Cardinality | Participation | Notes |
-|--------------|------------|---------------|-------|
-|              |            |               |       |
-|              |            |               |       |
-|              |            |               |       |
+| Relationship                 | Cardinality | Participation  | Notes                             |
+| ---------------------------- | ----------- | -------------- | --------------------------------- |
+| borrows (member–loan)        | 1 : N       | Total on loan  | One member can borrow many books  |
+| recorded_in (loan–book)      | N : 1       | Total on loan  | Each loan refers to one book      |
+| generates (loan–fine)        | 1 : 1       | Partial        | Fine generated only if late       |
+| registers (member–event)     | M : N       | Partial        | Members can register for events   |
+| held_in (event–room)         | 1 : N       | Total on event | Each event held in a room         |
+| conducted_by (event–speaker) | M : N       | Partial        | Events can have multiple speakers |
 
 ### Assumptions
-- 
-- 
-- 
+- Each entity has a unique primary key, and relationships are maintained using foreign keys.
+- A member can borrow multiple books and register for multiple events.
+- Fines are generated only for overdue loans, and not all loans result in a fine.
 
 ---
 
@@ -106,32 +117,38 @@ A popular restaurant wants to manage reservations, orders, and billing.
 - Waiters assigned to serve reservations.
 
 ### ER Diagram:
-*Paste or attach your diagram here*  
-![ER Diagram](er_diagram_restaurant.png)
+<img width="1280" height="853" alt="image" src="https://github.com/user-attachments/assets/588fe56b-121f-4a92-a4df-4336385b62eb" />
+
 
 ### Entities and Attributes
 
-| Entity | Attributes (PK, FK) | Notes |
-|--------|--------------------|-------|
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
-|        |                    |       |
+| Entity      | Attributes (PK, FK)                                            | Notes                        |
+| ----------- | -------------------------------------------------------------- | ---------------------------- |
+| customer    | **customer_id (PK)**, name                                     | Stores customer details      |
+| reservation | **reservation_id (PK)**, date, **customer_id (FK)**            | Reservation made by customer |
+| waiter      | **waiter_id (PK)**, name                                       | Waiter details               |
+| dish        | **dish_id (PK)**, name                                         | Food items available         |
+| category    | **category_id (PK)**, category_name                            | Dish classification          |
+| orders      | **order_id (PK)**, **waiter_id (FK)**, **reservation_id (FK)** | Order handled by waiter      |
+| bill        | **bill_id (PK)**, amount, **order_id (FK)**                    | Billing details              |
+
 
 ### Relationships and Constraints
 
-| Relationship | Cardinality | Participation | Notes |
-|--------------|------------|---------------|-------|
-|              |            |               |       |
-|              |            |               |       |
-|              |            |               |       |
+| Relationship                       | Cardinality | Participation        | Notes                                   |
+| ---------------------------------- | ----------- | -------------------- | --------------------------------------- |
+| reservation (customer–reservation) | 1 : N       | Total on reservation | One customer can have many reservations |
+| assigns (reservation–dish)         | M : N       | Partial              | Multiple dishes per reservation         |
+| serves (waiter–order)              | 1 : N       | Total on order       | One waiter handles many orders          |
+| contains (order–category)          | N : 1       | Partial              | Order linked to category indirectly     |
+| belongs_to (dish–category)         | N : 1       | Total on dish        | Each dish belongs to one category       |
+| generates (order–bill)             | 1 : 1       | Total on bill        | Each order generates one bill           |
+
 
 ### Assumptions
-- 
-- 
-- 
-
+- Each entity has a unique primary key, and relationships use foreign keys.
+- A customer can make multiple reservations and order multiple dishes.
+- Each order is handled by one waiter and generates one bill.
 ---
 
 ## Instructions for Students
